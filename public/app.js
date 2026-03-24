@@ -45,6 +45,27 @@ async function doLogin(){
 
 async function doLogout(){ await sb.auth.signOut(); location.reload(); }
 
+// Carrega configurações de branding antes de mostrar a tela de login
+(async()=>{
+  try {
+    const {data}=await sb.from('configuracoes').select('chave,valor');
+    if(data){ data.forEach(r=>{ cache.config[r.chave]=r.valor; }); applyLoginBranding(); }
+  } catch(e){}
+})();
+
+function applyLoginBranding(){
+  const nome=cache.config['empresa_nome']||'FinanceGest';
+  const logo=cache.config['empresa_logo']||'';
+  document.title=nome;
+  const nameEl=document.getElementById('auth-logo-name');
+  if(nameEl) nameEl.textContent=nome;
+  const imgEl=document.getElementById('auth-logo-img');
+  if(imgEl){
+    if(logo){ imgEl.src=logo; imgEl.style.display=''; }
+    else { imgEl.src=''; imgEl.style.display='none'; }
+  }
+}
+
 sb.auth.onAuthStateChange(async(_,session)=>{
   if(session?.user){ currentUser=session.user; await loadUserRole(); await loadPerms(); bootApp(); }
   else { document.getElementById('auth-screen').style.display='flex'; document.getElementById('app-screen').style.display='none'; }
