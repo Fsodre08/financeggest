@@ -71,6 +71,7 @@ function bootApp(){
   document.getElementById('nav-receber').style.display=showFin?'':'none';
   document.getElementById('nav-fluxo').style.display=showFin?'':'none';
   document.getElementById('nav-maquinas').style.display=canDo('ver_maquinas')?'':'none';
+  document.getElementById('nav-medicao').style.display=isAdmin()?'flex':'none';
   document.getElementById('nav-config').style.display=isAdmin()?'flex':'none';
 
   document.getElementById('dash-fin-metrics').style.display=showFin?'':'none';
@@ -177,6 +178,7 @@ function showPage(id, el, skipActive){
   if(id==='receber') renderReceber();
   if(id==='maquinas') renderMaquinas();
   if(id==='config') loadConfigPage();
+  if(id==='medicao') initMedicao();
 }
 
 function switchTab(id, el){
