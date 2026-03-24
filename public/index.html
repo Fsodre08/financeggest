@@ -7,40 +7,39 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
-  --bg: #ffffff; --bg2: #f5f4f1; --bg3: #eeece8;
-  --txt: #1a1a18; --txt2: #6b6b67; --txt3: #9b9b96;
-  --border: rgba(0,0,0,0.11); --border2: rgba(0,0,0,0.2);
-  --green: #1D9E75; --green-bg: #E1F5EE; --green-txt: #0F6E56;
-  --red: #D85A30; --red-bg: #FCEBEB; --red-txt: #A32D2D;
-  --amber-bg: #FAEEDA; --amber-txt: #854F0B;
-  --blue-bg: #E6F1FB; --blue-txt: #0C447C;
-  --r: 8px; --rl: 12px;
+  --bg:#ffffff;--bg2:#f5f4f1;--bg3:#eeece8;
+  --txt:#1a1a18;--txt2:#6b6b67;--txt3:#9b9b96;
+  --border:rgba(0,0,0,0.11);--border2:rgba(0,0,0,0.2);
+  --green:#1D9E75;--green-bg:#E1F5EE;--green-txt:#0F6E56;
+  --red:#D85A30;--red-bg:#FCEBEB;--red-txt:#A32D2D;
+  --amber-bg:#FAEEDA;--amber-txt:#854F0B;
+  --blue-bg:#E6F1FB;--blue-txt:#0C447C;
+  --r:8px;--rl:12px;
 }
-@media(prefers-color-scheme:dark){
-  :root{
-    --bg:#1e1e1c;--bg2:#2a2a28;--bg3:#141412;
-    --txt:#f0ede8;--txt2:#a0a09a;--txt3:#70706a;
-    --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.18);
-    --green-bg:#0a3326;--green-txt:#5DCAA5;
-    --red-bg:#3a1010;--red-txt:#F09595;
-    --amber-bg:#3a2a00;--amber-txt:#FAC775;
-    --blue-bg:#0a1e32;--blue-txt:#85B7EB;
-  }
-}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1e1e1c;--bg2:#2a2a28;--bg3:#141412;
+  --txt:#f0ede8;--txt2:#a0a09a;--txt3:#70706a;
+  --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.18);
+  --green-bg:#0a3326;--green-txt:#5DCAA5;
+  --red-bg:#3a1010;--red-txt:#F09595;
+  --amber-bg:#3a2a00;--amber-txt:#FAC775;
+  --blue-bg:#0a1e32;--blue-txt:#85B7EB;
+}}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--txt);font-size:14px;}
 
-/* AUTH */
-.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg3);}
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;}
 .auth-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:2.5rem 2rem;width:360px;}
-.auth-logo{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txt2);margin-bottom:2rem;text-align:center;}
+.auth-logo{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txt2);margin-bottom:2rem;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px;}
+.auth-logo img{height:32px;border-radius:4px;object-fit:contain;}
 .auth-title{font-size:18px;font-weight:500;margin-bottom:1.5rem;}
 .auth-err{background:var(--red-bg);color:var(--red-txt);font-size:13px;padding:8px 12px;border-radius:var(--r);margin-bottom:1rem;display:none;}
 
-/* LAYOUT */
 .app{display:flex;min-height:100vh;}
 .sidebar{width:220px;min-width:220px;background:var(--bg);border-right:0.5px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:4px;}
-.sidebar-logo{font-size:12px;font-weight:600;color:var(--txt2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.5rem;padding:0 .5rem;}
+.sidebar-logo{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem;padding:0 .5rem;}
+.sidebar-logo img{height:28px;border-radius:4px;object-fit:contain;display:none;}
+.sidebar-logo-text{font-size:12px;font-weight:600;color:var(--txt2);letter-spacing:.1em;text-transform:uppercase;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r);font-size:14px;cursor:pointer;color:var(--txt2);border:none;background:none;width:100%;text-align:left;transition:background .15s;}
 .nav-item:hover{background:var(--bg2);color:var(--txt);}
 .nav-item.active{background:var(--bg2);color:var(--txt);font-weight:500;}
@@ -56,48 +55,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .page.active{display:block;}
 .page-title{font-size:20px;font-weight:500;margin-bottom:1.5rem;}
 
-/* METRICS */
 .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:1.5rem;}
 .metric-card{background:var(--bg2);border-radius:var(--r);padding:1rem 1.25rem;}
 .metric-label{font-size:11px;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;}
 .metric-value{font-size:22px;font-weight:500;}
 .metric-sub{font-size:12px;color:var(--txt2);margin-top:4px;}
 
-/* CARDS */
 .card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem;}
 .card-title{font-size:11px;font-weight:600;margin-bottom:1rem;color:var(--txt2);text-transform:uppercase;letter-spacing:.08em;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
 
-/* TABLE */
 table{width:100%;border-collapse:collapse;font-size:13px;}
 th{text-align:left;font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;padding:0 0 10px;border-bottom:0.5px solid var(--border);}
 td{padding:10px 0;border-bottom:0.5px solid var(--border);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
 
-/* BADGES */
 .badge{display:inline-block;font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;}
 .badge-ok{background:var(--green-bg);color:var(--green-txt);}
 .badge-warn{background:var(--amber-bg);color:var(--amber-txt);}
 .badge-err{background:var(--red-bg);color:var(--red-txt);}
+.badge-blue{background:var(--blue-bg);color:var(--blue-txt);}
 .tag{display:inline-block;font-size:11px;padding:2px 6px;border-radius:4px;background:var(--bg2);color:var(--txt2);}
 
-/* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:7px 14px;border-radius:var(--r);border:0.5px solid var(--border2);background:var(--bg);color:var(--txt);cursor:pointer;transition:background .15s;}
 .btn:hover{background:var(--bg2);}
 .btn:disabled{opacity:.5;cursor:not-allowed;}
 .btn-primary{background:var(--green);color:#fff;border-color:var(--green);}
 .btn-primary:hover{background:var(--green-txt);}
 .btn-danger{background:var(--red-bg);color:var(--red-txt);border-color:transparent;}
+.btn-sm{font-size:11px;padding:4px 9px;}
 
-/* TOOLBAR */
 .toolbar{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;}
 .toolbar-right{margin-left:auto;display:flex;gap:8px;}
 
-/* INPUTS */
 input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],select,textarea{font-size:13px;padding:7px 10px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--txt);outline:none;font-family:inherit;}
 input:focus,select:focus,textarea:focus{border-color:var(--green);}
+input[type=checkbox]{width:16px;height:16px;accent-color:var(--green);cursor:pointer;}
 
-/* FORM */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .form-group{display:flex;flex-direction:column;gap:5px;}
 .form-group label{font-size:12px;color:var(--txt2);font-weight:500;}
@@ -105,22 +99,19 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
 .form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem;}
 .full{grid-column:1/-1;}
 
-/* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--bg);border-radius:var(--rl);border:0.5px solid var(--border);padding:1.5rem;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;}
 .modal-title{font-size:16px;font-weight:500;margin-bottom:1.25rem;}
 
-/* MISC */
 .empty{text-align:center;padding:3rem 1rem;color:var(--txt2);font-size:14px;}
 .alert{padding:10px 14px;border-radius:var(--r);font-size:13px;margin-bottom:1rem;}
 .alert-info{background:var(--blue-bg);color:var(--blue-txt);border:0.5px solid rgba(55,138,221,0.3);}
+.alert-ok{background:var(--green-bg);color:var(--green-txt);}
 .alert-warn{background:var(--amber-bg);color:var(--amber-txt);}
 .pos{color:var(--green);}
 .neg{color:var(--red);}
-.sep{height:0.5px;background:var(--border);margin:1rem 0;}
 
-/* MACHINE CARD */
 .machine-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
 .machine-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:1.25rem;cursor:pointer;transition:border-color .15s;}
 .machine-card:hover{border-color:var(--border2);}
@@ -131,14 +122,39 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
 .machine-stat{background:var(--bg2);border-radius:var(--r);padding:8px 10px;}
 .machine-stat-label{font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;}
 .machine-stat-val{font-size:14px;font-weight:500;margin-top:2px;}
-.doc-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border);}
-.doc-row:last-child{border-bottom:none;}
 .progress-bar{background:var(--bg2);border-radius:4px;height:5px;overflow:hidden;margin-top:6px;}
 .progress-fill{height:100%;border-radius:4px;background:var(--green);transition:width .4s;}
+.doc-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border);}
+.doc-row:last-child{border-bottom:none;}
 
-/* SPINNER */
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;}
+/* SETTINGS */
+.settings-tabs{display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:0.5px solid var(--border);padding-bottom:0;}
+.stab{padding:8px 16px;font-size:13px;font-weight:500;color:var(--txt2);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.stab:hover{color:var(--txt);}
+.stab.active{color:var(--green);border-bottom-color:var(--green);}
+.stab-content{display:none;}
+.stab-content.active{display:block;}
+
+.user-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);}
+.user-row:last-child{border-bottom:none;}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--blue-txt);flex-shrink:0;}
+.user-details{flex:1;}
+.user-name-text{font-weight:500;font-size:13px;}
+.user-email-text{font-size:12px;color:var(--txt2);}
+
+.perm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-top:8px;}
+.perm-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg2);border-radius:var(--r);font-size:13px;}
+
+.logo-preview{width:80px;height:80px;border-radius:var(--r);border:0.5px solid var(--border);object-fit:contain;background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--txt3);font-size:12px;overflow:hidden;}
+.logo-preview img{width:100%;height:100%;object-fit:contain;}
+
+.cat-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--border);}
+.cat-row:last-child{border-bottom:none;}
+
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
+
+.sep{height:0.5px;background:var(--border);margin:1.25rem 0;}
 </style>
 </head>
 <body>
@@ -146,7 +162,10 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
 <!-- LOGIN -->
 <div class="auth-wrap" id="auth-screen">
   <div class="auth-card">
-    <div class="auth-logo">FinanceGest</div>
+    <div class="auth-logo" id="auth-logo-wrap">
+      <img id="auth-logo-img" src="" style="display:none;">
+      <span id="auth-logo-name">FinanceGest</span>
+    </div>
     <div class="auth-title">Entrar na conta</div>
     <div class="auth-err" id="auth-err"></div>
     <div class="form-group" style="margin-bottom:12px;">
@@ -164,15 +183,19 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
 <!-- APP -->
 <div class="app" id="app-screen" style="display:none;">
   <nav class="sidebar">
-    <div class="sidebar-logo">FinanceGest</div>
+    <div class="sidebar-logo">
+      <img id="sidebar-logo-img" src="" alt="">
+      <span class="sidebar-logo-text" id="sidebar-empresa-nome">FinanceGest</span>
+    </div>
     <button class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">▦</span> Dashboard</button>
-    <button class="nav-item admin-only" onclick="showPage('pagar',this)"><span class="nav-icon">↑</span> Contas a pagar</button>
-    <button class="nav-item admin-only" onclick="showPage('receber',this)"><span class="nav-icon">↓</span> Contas a receber</button>
-    <button class="nav-item admin-only" onclick="showPage('fluxo',this)"><span class="nav-icon">≋</span> Fluxo de caixa</button>
-    <button class="nav-item" onclick="showPage('maquinas',this)"><span class="nav-icon">⚙</span> Máquinas</button>
+    <button class="nav-item" id="nav-pagar" onclick="showPage('pagar',this)"><span class="nav-icon">↑</span> Contas a pagar</button>
+    <button class="nav-item" id="nav-receber" onclick="showPage('receber',this)"><span class="nav-icon">↓</span> Contas a receber</button>
+    <button class="nav-item" id="nav-fluxo" onclick="showPage('fluxo',this)"><span class="nav-icon">≋</span> Fluxo de caixa</button>
+    <button class="nav-item" id="nav-maquinas" onclick="showPage('maquinas',this)"><span class="nav-icon">⚙</span> Máquinas</button>
+    <button class="nav-item" id="nav-config" style="display:none;" onclick="showPage('config',this)"><span class="nav-icon">◈</span> Configurações</button>
     <div class="sidebar-footer">
-      <div class="user-info" id="user-info-box">
-        <div id="user-email-display" style="font-weight:500;"></div>
+      <div class="user-info">
+        <div id="user-email-display" style="font-weight:500;font-size:12px;"></div>
         <div id="user-role-display"></div>
       </div>
       <button class="nav-item" onclick="doLogout()"><span class="nav-icon">→</span> Sair</button>
@@ -184,7 +207,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="page-title">Visão geral</div>
-      <div class="metrics" id="dash-metrics-financial">
+      <div class="metrics" id="dash-fin-metrics">
         <div class="metric-card"><div class="metric-label">Saldo estimado</div><div class="metric-value pos" id="m-saldo">—</div><div class="metric-sub">Recebido − Pago</div></div>
         <div class="metric-card"><div class="metric-label">A receber (30d)</div><div class="metric-value" id="m-receber">—</div><div class="metric-sub" id="m-receber-qt"></div></div>
         <div class="metric-card"><div class="metric-label">A pagar (30d)</div><div class="metric-value neg" id="m-pagar">—</div><div class="metric-sub" id="m-pagar-qt"></div></div>
@@ -192,9 +215,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
       <div class="metrics">
         <div class="metric-card"><div class="metric-label">Total de máquinas</div><div class="metric-value" id="m-maq">—</div><div class="metric-sub">na frota</div></div>
         <div class="metric-card"><div class="metric-label">Docs vencendo (30d)</div><div class="metric-value neg" id="m-docs">—</div><div class="metric-sub">documentos</div></div>
-        <div class="metric-card"><div class="metric-label">Valor da frota</div><div class="metric-value" id="m-frota">—</div><div class="metric-sub">valor atual depreciado</div></div>
+        <div class="metric-card"><div class="metric-label">Valor da frota</div><div class="metric-value" id="m-frota">—</div><div class="metric-sub">depreciado</div></div>
       </div>
-      <div class="grid2 admin-only">
+      <div class="grid2" id="dash-charts">
         <div class="card"><div class="card-title">Fluxo — últimos 6 meses</div><div style="position:relative;height:200px;"><canvas id="chartFluxo"></canvas></div></div>
         <div class="card"><div class="card-title">Categorias</div><div style="position:relative;height:200px;"><canvas id="chartCat"></canvas></div></div>
       </div>
@@ -209,7 +232,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
         <select id="filter-pagar" onchange="renderPagar()">
           <option value="">Todos status</option><option value="pendente">Pendente</option><option value="pago">Pago</option><option value="vencido">Vencido</option>
         </select>
-        <div class="toolbar-right"><button class="btn btn-primary" onclick="openModal('pagar')">+ Nova conta</button></div>
+        <div class="toolbar-right"><button class="btn btn-primary" id="btn-nova-pagar" onclick="openModal('pagar')">+ Nova conta</button></div>
       </div>
       <div class="card" style="padding:0;overflow:hidden;">
         <table><thead><tr>
@@ -226,7 +249,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
         <select id="filter-receber" onchange="renderReceber()">
           <option value="">Todos status</option><option value="pendente">Pendente</option><option value="recebido">Recebido</option><option value="vencido">Vencido</option>
         </select>
-        <div class="toolbar-right"><button class="btn btn-primary" onclick="openModal('receber')">+ Nova conta</button></div>
+        <div class="toolbar-right"><button class="btn btn-primary" id="btn-nova-receber" onclick="openModal('receber')">+ Nova conta</button></div>
       </div>
       <div class="card" style="padding:0;overflow:hidden;">
         <table><thead><tr>
@@ -235,7 +258,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
       </div>
     </div>
 
-    <!-- FLUXO DE CAIXA -->
+    <!-- FLUXO -->
     <div class="page" id="page-fluxo">
       <div class="page-title">Fluxo de caixa</div>
       <div class="metrics">
@@ -243,13 +266,13 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
         <div class="metric-card"><div class="metric-label">Total saídas</div><div class="metric-value neg" id="fc-saida">—</div></div>
         <div class="metric-card"><div class="metric-label">Resultado</div><div class="metric-value" id="fc-resultado">—</div></div>
       </div>
-      <div class="card"><div class="card-title">Projeção mensal (6m passado + 2m futuro)</div><div style="position:relative;height:260px;"><canvas id="chartFluxoDetail"></canvas></div></div>
+      <div class="card"><div class="card-title">Projeção mensal</div><div style="position:relative;height:260px;"><canvas id="chartFluxoDetail"></canvas></div></div>
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
           <div class="card-title" style="margin-bottom:0;">Extrato consolidado</div>
           <div style="display:flex;gap:8px;">
-            <button class="btn" onclick="exportCSV()" style="font-size:12px;padding:5px 10px;">↓ CSV</button>
-            <button class="btn" onclick="exportTxt()" style="font-size:12px;padding:5px 10px;">↓ Contador</button>
+            <button class="btn btn-sm" onclick="exportCSV()">↓ CSV</button>
+            <button class="btn btn-sm" onclick="exportTxt()">↓ Relatório</button>
           </div>
         </div>
         <table><thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th></tr></thead><tbody id="tbody-extrato"></tbody></table>
@@ -260,10 +283,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
     <div class="page" id="page-maquinas">
       <div class="page-title">Máquinas & Frota</div>
       <div class="toolbar">
-        <input type="text" placeholder="Buscar máquina..." id="search-maq" oninput="renderMaquinas()" style="width:220px;">
-        <div class="toolbar-right" id="btn-nova-maq-wrap">
-          <button class="btn btn-primary" onclick="openMaqModal()">+ Nova máquina</button>
-        </div>
+        <input type="text" placeholder="Buscar..." id="search-maq" oninput="renderMaquinas()" style="width:220px;">
+        <div class="toolbar-right"><button class="btn btn-primary" id="btn-nova-maq" onclick="openMaqModal()">+ Nova máquina</button></div>
       </div>
       <div id="maquinas-grid" class="machine-grid"></div>
     </div>
@@ -271,35 +292,182 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
     <!-- DETALHE MÁQUINA -->
     <div class="page" id="page-maq-detalhe">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;">
-        <button class="btn" onclick="showPage('maquinas',null,true)" style="padding:6px 10px;">← Voltar</button>
+        <button class="btn" onclick="showPage('maquinas',null,true)">← Voltar</button>
         <div class="page-title" id="maq-detalhe-title" style="margin-bottom:0;"></div>
         <div style="margin-left:auto;display:flex;gap:8px;" id="maq-detalhe-actions"></div>
       </div>
       <div class="grid2">
-        <div class="card">
-          <div class="card-title">Informações gerais</div>
-          <div id="maq-info-geral"></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Depreciação</div>
-          <div id="maq-depreciacao"></div>
-        </div>
+        <div class="card"><div class="card-title">Informações gerais</div><div id="maq-info-geral"></div></div>
+        <div class="card"><div class="card-title">Depreciação</div><div id="maq-depreciacao"></div></div>
       </div>
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
           <div class="card-title" style="margin-bottom:0;">Documentos</div>
-          <button class="btn btn-primary" onclick="openDocModal()" style="font-size:12px;padding:5px 10px;" id="btn-add-doc">+ Documento</button>
+          <button class="btn btn-primary btn-sm" onclick="openDocModal()" id="btn-add-doc">+ Documento</button>
         </div>
         <div id="maq-docs-list"></div>
       </div>
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-          <div class="card-title" style="margin-bottom:0;">Atualizações de horímetro</div>
-          <button class="btn btn-primary" onclick="openHoraModal()" style="font-size:12px;padding:5px 10px;" id="btn-add-hora">+ Registrar horas</button>
+          <div class="card-title" style="margin-bottom:0;">Horímetro</div>
+          <button class="btn btn-primary btn-sm" onclick="openHoraModal()" id="btn-add-hora">+ Registrar horas</button>
         </div>
         <div id="maq-horas-list"></div>
       </div>
     </div>
+
+    <!-- CONFIGURAÇÕES -->
+    <div class="page" id="page-config">
+      <div class="page-title">Configurações</div>
+      <div class="settings-tabs">
+        <button class="stab active" onclick="switchTab('empresa',this)">Empresa</button>
+        <button class="stab" onclick="switchTab('usuarios',this)">Usuários</button>
+        <button class="stab" onclick="switchTab('permissoes',this)">Permissões</button>
+        <button class="stab" onclick="switchTab('categorias',this)">Categorias</button>
+        <button class="stab" onclick="switchTab('contador',this)">Contador</button>
+        <button class="stab" onclick="switchTab('minha-conta',this)">Minha conta</button>
+      </div>
+
+      <!-- ABA EMPRESA -->
+      <div class="stab-content active" id="tab-empresa">
+        <div class="card">
+          <div class="card-title">Identidade visual</div>
+          <div style="display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap;">
+            <div>
+              <div style="font-size:12px;color:var(--txt2);margin-bottom:8px;">Logo atual</div>
+              <div class="logo-preview" id="logo-preview-box">
+                <img id="logo-preview-img" src="" style="display:none;">
+                <span id="logo-placeholder">Sem logo</span>
+              </div>
+              <div style="margin-top:8px;display:flex;gap:6px;">
+                <label class="btn btn-sm" style="cursor:pointer;">
+                  Alterar logo
+                  <input type="file" id="logo-file-input" accept="image/*" style="display:none;" onchange="handleLogoUpload(event)">
+                </label>
+                <button class="btn btn-sm btn-danger" onclick="removeLogo()">Remover</button>
+              </div>
+              <div style="font-size:11px;color:var(--txt2);margin-top:6px;">PNG ou SVG, até 200KB</div>
+            </div>
+            <div style="flex:1;min-width:200px;">
+              <div class="form-group" style="margin-bottom:12px;">
+                <label>Nome da empresa</label>
+                <input type="text" id="cfg-empresa-nome" placeholder="Ex: Coleta Manaus Ltda" style="width:100%;">
+              </div>
+              <button class="btn btn-primary" onclick="saveEmpresa()">Salvar</button>
+              <div id="empresa-saved-msg" style="display:none;" class="alert alert-ok" style="margin-top:8px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA USUÁRIOS -->
+      <div class="stab-content" id="tab-usuarios">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+            <div class="card-title" style="margin-bottom:0;">Usuários ativos</div>
+            <button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Convidar usuário</button>
+          </div>
+          <div id="usuarios-list"></div>
+        </div>
+        <div class="alert alert-info">Novos usuários recebem um e-mail de convite do Supabase para definir a senha. Você define o papel (Admin ou Operador) ao convidar.</div>
+      </div>
+
+      <!-- ABA PERMISSÕES -->
+      <div class="stab-content" id="tab-permissoes">
+        <div class="card">
+          <div class="card-title">Permissões por usuário</div>
+          <div class="alert alert-warn" style="margin-bottom:1rem;">Admins sempre têm acesso total. As permissões abaixo se aplicam apenas a Operadores.</div>
+          <div id="permissoes-list"></div>
+        </div>
+      </div>
+
+      <!-- ABA CATEGORIAS -->
+      <div class="stab-content" id="tab-categorias">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+            <div class="card-title" style="margin-bottom:0;">Categorias financeiras</div>
+            <button class="btn btn-primary btn-sm" onclick="openCatModal()">+ Nova categoria</button>
+          </div>
+          <div id="categorias-list"></div>
+        </div>
+      </div>
+
+      <!-- ABA CONTADOR -->
+      <div class="stab-content" id="tab-contador">
+        <div class="card">
+          <div class="card-title">Dados do contador</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nome do contador / escritório</label>
+              <input type="text" id="cfg-contador-nome" placeholder="Ex: Escritório Contábil XYZ">
+            </div>
+            <div class="form-group">
+              <label>E-mail do contador</label>
+              <input type="email" id="cfg-contador-email" placeholder="contador@email.com">
+            </div>
+            <div class="form-group full">
+              <label>Observações para o relatório</label>
+              <textarea id="cfg-contador-obs" rows="3" placeholder="Ex: Enviar todo dia 5 com CNPJ 00.000.000/0001-00"></textarea>
+            </div>
+          </div>
+          <div class="form-actions"><button class="btn btn-primary" onclick="saveContador()">Salvar dados</button></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Enviar relatório ao contador</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Período — início</label>
+              <input type="date" id="env-inicio">
+            </div>
+            <div class="form-group">
+              <label>Período — fim</label>
+              <input type="date" id="env-fim">
+            </div>
+            <div class="form-group full">
+              <label>Mensagem adicional (opcional)</label>
+              <textarea id="env-obs" rows="2"></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn" onclick="previewRelatorio()">Pré-visualizar</button>
+            <button class="btn btn-primary" onclick="enviarContador()" id="btn-enviar-contador">↑ Gerar e baixar relatório</button>
+          </div>
+          <div id="envio-historico-wrap" style="margin-top:1.5rem;">
+            <div class="card-title">Histórico de envios</div>
+            <div id="envio-historico"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA MINHA CONTA -->
+      <div class="stab-content" id="tab-minha-conta">
+        <div class="card">
+          <div class="card-title">Alterar senha</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nova senha</label>
+              <input type="password" id="nova-senha" placeholder="Mínimo 6 caracteres" style="width:100%;">
+            </div>
+            <div class="form-group">
+              <label>Confirmar nova senha</label>
+              <input type="password" id="conf-senha" placeholder="Repita a senha" style="width:100%;">
+            </div>
+          </div>
+          <div id="senha-msg" class="alert" style="display:none;margin-top:12px;"></div>
+          <div class="form-actions"><button class="btn btn-primary" onclick="alterarSenha()">Alterar senha</button></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Informações da conta</div>
+          <table><tbody>
+            <tr><td style="color:var(--txt2);padding:8px 0;width:160px;">E-mail</td><td id="mc-email" style="padding:8px 0;">—</td></tr>
+            <tr><td style="color:var(--txt2);padding:8px 0;">Papel</td><td id="mc-role" style="padding:8px 0;">—</td></tr>
+            <tr><td style="color:var(--txt2);padding:8px 0;">Membro desde</td><td id="mc-since" style="padding:8px 0;">—</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+    </div><!-- /page-config -->
 
   </main>
 </div>
@@ -311,12 +479,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
     <div class="form-grid">
       <div class="form-group full"><label>Descrição</label><input type="text" id="ff-desc"></div>
       <div class="form-group"><label id="ff-part-label">Contraparte</label><input type="text" id="ff-part"></div>
-      <div class="form-group"><label>Categoria</label>
-        <select id="ff-cat">
-          <option>Combustível</option><option>Manutenção</option><option>Salários</option>
-          <option>Impostos</option><option>Serviços terceiros</option><option>Coleta municipal</option><option>Outros</option>
-        </select>
-      </div>
+      <div class="form-group"><label>Categoria</label><select id="ff-cat"></select></div>
       <div class="form-group"><label>Valor (R$)</label><input type="number" id="ff-valor" min="0" step="0.01"></div>
       <div class="form-group"><label>Vencimento</label><input type="date" id="ff-venc"></div>
     </div>
@@ -332,15 +495,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
   <div class="modal">
     <div class="modal-title" id="modal-maq-title">Nova máquina</div>
     <div class="form-grid">
-      <div class="form-group"><label>Marca</label><input type="text" id="fm-marca" placeholder="Ex: Volvo"></div>
-      <div class="form-group"><label>Modelo</label><input type="text" id="fm-modelo" placeholder="Ex: FH 460"></div>
+      <div class="form-group"><label>Marca</label><input type="text" id="fm-marca"></div>
+      <div class="form-group"><label>Modelo</label><input type="text" id="fm-modelo"></div>
       <div class="form-group"><label>Ano</label><input type="number" id="fm-ano" min="1990" max="2030"></div>
       <div class="form-group"><label>Placa / Série</label><input type="text" id="fm-placa"></div>
       <div class="form-group"><label>Tipo</label>
-        <select id="fm-tipo">
-          <option>Caminhão</option><option>Compactador</option><option>Pá carregadeira</option>
-          <option>Escavadeira</option><option>Trator</option><option>Outro</option>
-        </select>
+        <select id="fm-tipo"><option>Caminhão</option><option>Compactador</option><option>Pá carregadeira</option><option>Escavadeira</option><option>Trator</option><option>Outro</option></select>
       </div>
       <div class="form-group"><label>Horímetro atual (h)</label><input type="number" id="fm-horas" min="0" step="1" value="0"></div>
       <div class="form-group"><label>Valor de compra (R$)</label><input type="number" id="fm-valor-compra" min="0" step="100"></div>
@@ -362,10 +522,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
     <div class="modal-title">Adicionar documento</div>
     <div class="form-grid">
       <div class="form-group"><label>Tipo</label>
-        <select id="fd-tipo">
-          <option>CRLV</option><option>Seguro</option><option>Licença ambiental</option>
-          <option>IPVA</option><option>Inspeção veicular</option><option>Outro</option>
-        </select>
+        <select id="fd-tipo"><option>CRLV</option><option>Seguro</option><option>Licença ambiental</option><option>IPVA</option><option>Inspeção veicular</option><option>Outro</option></select>
       </div>
       <div class="form-group"><label>Número / Referência</label><input type="text" id="fd-numero"></div>
       <div class="form-group"><label>Data de emissão</label><input type="date" id="fd-emissao"></div>
@@ -385,12 +542,49 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);}
     <div class="modal-title">Registrar horímetro</div>
     <div class="form-grid">
       <div class="form-group"><label>Data da leitura</label><input type="date" id="fh-data"></div>
-      <div class="form-group"><label>Leitura do horímetro (h)</label><input type="number" id="fh-horas" min="0" step="1"></div>
-      <div class="form-group full"><label>Observação</label><input type="text" id="fh-obs" placeholder="Ex: revisão, viagem, etc."></div>
+      <div class="form-group"><label>Leitura (h)</label><input type="number" id="fh-horas" min="0" step="1"></div>
+      <div class="form-group full"><label>Observação</label><input type="text" id="fh-obs"></div>
     </div>
     <div class="form-actions">
       <button class="btn" onclick="closeModal('hora')">Cancelar</button>
       <button class="btn btn-primary" onclick="saveHora()" id="btn-save-hora">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL USUÁRIO -->
+<div class="modal-overlay" id="modal-user" onclick="if(event.target===this)closeModal('user')">
+  <div class="modal">
+    <div class="modal-title" id="modal-user-title">Convidar usuário</div>
+    <div class="alert alert-info" style="margin-bottom:1rem;">O usuário receberá um e-mail para definir a senha de acesso.</div>
+    <div class="form-grid">
+      <div class="form-group full"><label>E-mail</label><input type="email" id="fu-email" style="width:100%;"></div>
+      <div class="form-group"><label>Papel</label>
+        <select id="fu-role"><option value="operador">Operador</option><option value="admin">Admin</option></select>
+      </div>
+      <div class="form-group"><label>Senha inicial</label><input type="text" id="fu-senha" placeholder="Mínimo 6 caracteres"></div>
+    </div>
+    <div id="user-modal-msg" class="alert" style="display:none;margin-top:8px;"></div>
+    <div class="form-actions">
+      <button class="btn" onclick="closeModal('user')">Cancelar</button>
+      <button class="btn btn-primary" onclick="criarUsuario()" id="btn-save-user">Criar usuário</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CATEGORIA -->
+<div class="modal-overlay" id="modal-cat" onclick="if(event.target===this)closeModal('cat')">
+  <div class="modal">
+    <div class="modal-title">Nova categoria</div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Nome</label><input type="text" id="fc-nome" style="width:100%;"></div>
+      <div class="form-group full"><label>Aplicável a</label>
+        <select id="fc-tipo"><option value="pagar">Contas a pagar</option><option value="receber">Contas a receber</option><option value="ambos">Ambos</option></select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn" onclick="closeModal('cat')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveCat()" id="btn-save-cat">Salvar</button>
     </div>
   </div>
 </div>
