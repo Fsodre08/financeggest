@@ -35,8 +35,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .auth-title{font-size:18px;font-weight:500;margin-bottom:1.5rem;}
 .auth-err{background:var(--red-bg);color:var(--red-txt);font-size:13px;padding:8px 12px;border-radius:var(--r);margin-bottom:1rem;display:none;}
 
-.app{display:grid;grid-template-columns:220px 1fr;position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;}
-.sidebar{background:var(--bg);border-right:0.5px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:4px;height:100%;overflow-y:auto;}
+.app{display:flex;min-height:100vh;}
+.sidebar{width:220px;min-width:220px;background:var(--bg);border-right:0.5px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:4px;}
 .sidebar-logo{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem;padding:0 .5rem;}
 .sidebar-logo img{height:28px;border-radius:4px;object-fit:contain;display:none;}
 .sidebar-logo-text{font-size:12px;font-weight:600;color:var(--txt2);letter-spacing:.1em;text-transform:uppercase;}
@@ -50,7 +50,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .role-admin{background:var(--blue-bg);color:var(--blue-txt);}
 .role-operador{background:var(--green-bg);color:var(--green-txt);}
 
-.main{padding:2rem;overflow-y:auto;height:100%;min-width:0;}
+.main{flex:1;padding:2rem;overflow-y:auto;}
 .page{display:none;}
 .page.active{display:block;}
 .page-title{font-size:20px;font-weight:500;margin-bottom:1.5rem;}
@@ -470,6 +470,60 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--green);cursor:poi
 
     </div><!-- /page-config -->
 
+<!-- ABA MEDIÇÃO -->
+<div class="page" id="page-medicao">
+  <div class="page-title">Importar medição</div>
+  <div class="alert alert-info" style="margin-bottom:1.5rem;">Anexe o PDF da medição mensal. A IA extrai automaticamente as horas por equipamento e o valor total — você revisa e confirma antes de qualquer lançamento.</div>
+  <div class="card">
+    <div class="card-title">1. Selecionar PDF</div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <label class="btn btn-primary" style="cursor:pointer;">Selecionar PDF<input type="file" id="med-file-input" accept="application/pdf" style="display:none;" onchange="handleMedicaoPDF(event)"></label>
+      <span id="med-file-name" style="display:none;font-size:13px;color:var(--txt2);"></span>
+    </div>
+    <div id="med-upload-status" class="alert" style="display:none;margin-top:1rem;"></div>
+    <div class="sep"></div>
+    <div class="card-title">2. Configurar lançamento</div>
+    <div class="form-grid" style="max-width:520px;">
+      <div class="form-group"><label>Competência (mês/ano)</label><input type="month" id="med-competencia" style="width:100%;"></div>
+      <div class="form-group"><label>Vencimento da cobrança</label><input type="date" id="med-vencimento" style="width:100%;"></div>
+      <div class="form-group full"><label>Cliente (preenchido automaticamente pelo PDF)</label><input type="text" id="med-cliente-override" placeholder="Será extraído do PDF..." style="width:100%;"></div>
+    </div>
+    <div class="sep"></div>
+    <button class="btn btn-primary" id="btn-extrair-pdf" onclick="extrairDadosPDF()" disabled>Extrair dados com IA</button>
+  </div>
+  <div id="med-resultado-wrap" style="display:none;">
+    <div class="card">
+      <div class="card-title">3. Revisar dados extraídos</div>
+      <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:1.25rem;">
+        <div class="metric-card"><div class="metric-label">Cliente identificado</div><div class="metric-value" id="med-res-cliente" style="font-size:15px;">—</div></div>
+        <div class="metric-card"><div class="metric-label">Período</div><div class="metric-value" id="med-res-periodo" style="font-size:15px;">—</div></div>
+        <div class="metric-card"><div class="metric-label">Valor total</div><div class="metric-value pos" id="med-res-valor">—</div></div>
+      </div>
+      <div id="med-res-obs-wrap" style="display:none;margin-bottom:1rem;"><div style="font-size:12px;color:var(--txt2);margin-bottom:4px;">Observações do PDF</div><div id="med-res-obs" style="font-size:13px;color:var(--txt2);line-height:1.6;"></div></div>
+      <div style="font-size:12px;color:var(--txt2);margin-bottom:8px;">Equipamentos — cruce com as máquinas do sistema e ajuste horas/valores se necessário:</div>
+      <div style="overflow-x:auto;">
+        <table><thead><tr>
+          <th style="padding:8px 0 8px 1rem;">Equipamento / Máquina no sistema</th>
+          <th style="min-width:80px;">Unid.</th>
+          <th style="min-width:110px;">Horas no período</th>
+          <th style="min-width:130px;">Valor (R$)</th>
+          <th style="min-width:90px;padding-right:1rem;">Status</th>
+        </tr></thead><tbody id="med-equip-tbody"></tbody></table>
+      </div>
+      <div class="alert alert-warn" style="margin-top:1rem;">Verifique cada linha antes de confirmar. As horas serão somadas ao horímetro atual de cada máquina.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">4. Confirmar lançamento</div>
+      <p style="font-size:13px;color:var(--txt2);line-height:1.8;margin-bottom:1rem;">Ao confirmar, o sistema irá:<br>
+        <strong style="font-weight:500;">①</strong> Criar uma <strong style="font-weight:500;">conta a receber</strong> com o valor total e vencimento informado<br>
+        <strong style="font-weight:500;">②</strong> <strong style="font-weight:500;">Somar as horas</strong> do período ao horímetro de cada máquina cruzada
+      </p>
+      <div id="med-sucesso" class="alert alert-ok" style="display:none;margin-bottom:1rem;"><div id="med-sucesso-texto"></div></div>
+      <button class="btn btn-primary" id="btn-confirmar-lancamento" onclick="confirmarLancamento()">Confirmar e lançar</button>
+    </div>
+  </div>
+</div>
+
   </main>
 </div>
 
@@ -586,60 +640,6 @@ input[type=checkbox]{width:16px;height:16px;accent-color:var(--green);cursor:poi
     <div class="form-actions">
       <button class="btn" onclick="closeModal('cat')">Cancelar</button>
       <button class="btn btn-primary" onclick="saveCat()" id="btn-save-cat">Salvar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ABA MEDIÇÃO -->
-<div class="page" id="page-medicao">
-  <div class="page-title">Importar medição</div>
-  <div class="alert alert-info" style="margin-bottom:1.5rem;">Anexe o PDF da medição mensal. A IA extrai automaticamente as horas por equipamento e o valor total — você revisa e confirma antes de qualquer lançamento.</div>
-  <div class="card">
-    <div class="card-title">1. Selecionar PDF</div>
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <label class="btn btn-primary" style="cursor:pointer;">Selecionar PDF<input type="file" id="med-file-input" accept="application/pdf" style="display:none;" onchange="handleMedicaoPDF(event)"></label>
-      <span id="med-file-name" style="display:none;font-size:13px;color:var(--txt2);"></span>
-    </div>
-    <div id="med-upload-status" class="alert" style="display:none;margin-top:1rem;"></div>
-    <div class="sep"></div>
-    <div class="card-title">2. Configurar lançamento</div>
-    <div class="form-grid" style="max-width:520px;">
-      <div class="form-group"><label>Competência (mês/ano)</label><input type="month" id="med-competencia" style="width:100%;"></div>
-      <div class="form-group"><label>Vencimento da cobrança</label><input type="date" id="med-vencimento" style="width:100%;"></div>
-      <div class="form-group full"><label>Cliente (preenchido automaticamente pelo PDF)</label><input type="text" id="med-cliente-override" placeholder="Será extraído do PDF..." style="width:100%;"></div>
-    </div>
-    <div class="sep"></div>
-    <button class="btn btn-primary" id="btn-extrair-pdf" onclick="extrairDadosPDF()" disabled>Extrair dados com IA</button>
-  </div>
-  <div id="med-resultado-wrap" style="display:none;">
-    <div class="card">
-      <div class="card-title">3. Revisar dados extraídos</div>
-      <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:1.25rem;">
-        <div class="metric-card"><div class="metric-label">Cliente identificado</div><div class="metric-value" id="med-res-cliente" style="font-size:15px;">—</div></div>
-        <div class="metric-card"><div class="metric-label">Período</div><div class="metric-value" id="med-res-periodo" style="font-size:15px;">—</div></div>
-        <div class="metric-card"><div class="metric-label">Valor total</div><div class="metric-value pos" id="med-res-valor">—</div></div>
-      </div>
-      <div id="med-res-obs-wrap" style="display:none;margin-bottom:1rem;"><div style="font-size:12px;color:var(--txt2);margin-bottom:4px;">Observações do PDF</div><div id="med-res-obs" style="font-size:13px;color:var(--txt2);line-height:1.6;"></div></div>
-      <div style="font-size:12px;color:var(--txt2);margin-bottom:8px;">Equipamentos — cruce com as máquinas do sistema e ajuste horas/valores se necessário:</div>
-      <div style="overflow-x:auto;">
-        <table><thead><tr>
-          <th style="padding:8px 0 8px 1rem;">Equipamento / Máquina no sistema</th>
-          <th style="min-width:80px;">Unid.</th>
-          <th style="min-width:110px;">Horas no período</th>
-          <th style="min-width:130px;">Valor (R$)</th>
-          <th style="min-width:90px;padding-right:1rem;">Status</th>
-        </tr></thead><tbody id="med-equip-tbody"></tbody></table>
-      </div>
-      <div class="alert alert-warn" style="margin-top:1rem;">Verifique cada linha antes de confirmar. As horas serão somadas ao horímetro atual de cada máquina.</div>
-    </div>
-    <div class="card">
-      <div class="card-title">4. Confirmar lançamento</div>
-      <p style="font-size:13px;color:var(--txt2);line-height:1.8;margin-bottom:1rem;">Ao confirmar, o sistema irá:<br>
-        <strong style="font-weight:500;">①</strong> Criar uma <strong style="font-weight:500;">conta a receber</strong> com o valor total e vencimento informado<br>
-        <strong style="font-weight:500;">②</strong> <strong style="font-weight:500;">Somar as horas</strong> do período ao horímetro de cada máquina cruzada
-      </p>
-      <div id="med-sucesso" class="alert alert-ok" style="display:none;margin-bottom:1rem;"><div id="med-sucesso-texto"></div></div>
-      <button class="btn btn-primary" id="btn-confirmar-lancamento" onclick="confirmarLancamento()">Confirmar e lançar</button>
     </div>
   </div>
 </div>
