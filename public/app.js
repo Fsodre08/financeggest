@@ -43,32 +43,38 @@ async function doLogin(){
   if(error){ err.textContent='E-mail ou senha incorretos.'; err.style.display='block'; }
 }
 
-async function doLogout(){ await sb.auth.signOut(); location.reload(); }
+async function doLogout(){
+  await sb.auth.signOut();
+  try { localStorage.clear(); sessionStorage.clear(); } catch(e){}
+  window.location.replace(window.location.pathname);
+}
 
-// Carrega configurações de branding antes de mostrar a tela de login
+// Carrega branding antes de mostrar login
 (async()=>{
   try {
     const {data}=await sb.from('configuracoes').select('chave,valor');
-    if(data){ data.forEach(r=>{ cache.config[r.chave]=r.valor; }); applyLoginBranding(); }
+    if(data){
+      data.forEach(r=>{ cache.config[r.chave]=r.valor; });
+      const nome=cache.config['empresa_nome']||'';
+      const logo=cache.config['empresa_logo']||'';
+      if(nome){ document.title=nome; const el=document.getElementById('auth-logo-name'); if(el) el.textContent=nome; }
+      if(logo){ const el=document.getElementById('auth-logo-img'); if(el){ el.src=logo; el.style.display='block'; } }
+    }
   } catch(e){}
 })();
 
-function applyLoginBranding(){
-  const nome=cache.config['empresa_nome']||'FinanceGest';
-  const logo=cache.config['empresa_logo']||'';
-  document.title=nome;
-  const nameEl=document.getElementById('auth-logo-name');
-  if(nameEl) nameEl.textContent=nome;
-  const imgEl=document.getElementById('auth-logo-img');
-  if(imgEl){
-    if(logo){ imgEl.src=logo; imgEl.style.display=''; }
-    else { imgEl.src=''; imgEl.style.display='none'; }
+let _bootedOnce=false;
+sb.auth.onAuthStateChange(async(event,session)=>{
+  if(session?.user){
+    if(_bootedOnce) return;
+    _bootedOnce=true;
+    currentUser=session.user;
+    await loadUserRole(); await loadPerms(); bootApp();
+  } else {
+    _bootedOnce=false;
+    document.getElementById('auth-screen').style.display='flex';
+    document.getElementById('app-screen').style.display='none';
   }
-}
-
-sb.auth.onAuthStateChange(async(_,session)=>{
-  if(session?.user){ currentUser=session.user; await loadUserRole(); await loadPerms(); bootApp(); }
-  else { document.getElementById('auth-screen').style.display='flex'; document.getElementById('app-screen').style.display='none'; }
 });
 
 async function loadUserRole(){
@@ -160,39 +166,55 @@ async function loadConfig(){
 }
 
 function applyBranding(){
-  const nome=cache.config['empresa_nome']||'FinanceGest';
+  const nome=cache.config['empresa_nome']||'MXP Máquinas e Equipamentos';
   const logo=cache.config['empresa_logo']||'';
   document.title=nome;
-  document.getElementById('sidebar-empresa-nome').textContent=nome;
-  document.getElementById('auth-logo-name').textContent=nome;
 
+  // sidebar e login
+  const sNome=document.getElementById('sidebar-empresa-nome');
+  if(sNome) sNome.textContent=nome;
+  const aNome=document.getElementById('auth-logo-name');
+  if(aNome) aNome.textContent=nome;
+
+  // logo em todos os lugares
   const sImg=document.getElementById('sidebar-logo-img');
   const aImg=document.getElementById('auth-logo-img');
   const prevImg=document.getElementById('logo-preview-img');
   const placeholder=document.getElementById('logo-placeholder');
 
   if(logo){
-    [sImg,aImg,prevImg].forEach(el=>{ el.src=logo; el.style.display=''; });
+    if(sImg){ sImg.src=logo; sImg.style.display='block'; }
+    if(aImg){ aImg.src=logo; aImg.style.display='block'; }
+    if(prevImg){ prevImg.src=logo; prevImg.style.display='block'; }
     if(placeholder) placeholder.style.display='none';
   } else {
-    [sImg,aImg,prevImg].forEach(el=>{ el.src=''; el.style.display='none'; });
+    if(sImg){ sImg.src=''; sImg.style.display='none'; }
+    if(aImg){ aImg.src=''; aImg.style.display='none'; }
+    if(prevImg){ prevImg.src=''; prevImg.style.display='none'; }
     if(placeholder) placeholder.style.display='';
   }
 
-  // set config form values
+  // campos do formulário de config
   const nInput=document.getElementById('cfg-empresa-nome');
-  if(nInput) nInput.value=nome==='FinanceGest'?'':nome;
+  if(nInput) nInput.value=nome;
   const cNome=document.getElementById('cfg-contador-nome');
-  if(cNome){ cNome.value=cache.config['contador_nome']||''; document.getElementById('cfg-contador-email').value=cache.config['contador_email']||''; document.getElementById('cfg-contador-obs').value=cache.config['contador_obs']||''; }
+  if(cNome){
+    cNome.value=cache.config['contador_nome']||'';
+    const cEmail=document.getElementById('cfg-contador-email');
+    if(cEmail) cEmail.value=cache.config['contador_email']||'';
+    const cObs=document.getElementById('cfg-contador-obs');
+    if(cObs) cObs.value=cache.config['contador_obs']||'';
+  }
 }
 
 // ─── NAV ──────────────────────────────────────────────────────
 let chartFluxo, chartCat, chartFluxoDetail;
 
 function showPage(id, el, skipActive){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>{ p.classList.remove('active'); p.style.display=''; });
   if(!skipActive){ document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); if(el) el.classList.add('active'); }
-  document.getElementById('page-'+id).classList.add('active');
+  const pg=document.getElementById('page-'+id);
+  if(pg){ pg.classList.add('active'); pg.style.display='block'; }
   if(id==='dashboard') updateDashboard();
   if(id==='fluxo') renderFluxo();
   if(id==='pagar') renderPagar();
