@@ -95,28 +95,26 @@ Responda APENAS com JSON válido, sem texto extra, sem markdown, no formato:
 }`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    // Chama a Supabase Edge Function (proxy seguro para a API da Anthropic)
+    const { data: { session } } = await sb.auth.getSession();
+    const response = await fetch(SUPABASE_URL + '/functions/v1/extrair-medicao', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + session.access_token,
+        'apikey': SUPABASE_ANON
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: medicaoState.pdfBase64 } },
-            { type: 'text', text: prompt }
-          ]
-        }]
+        pdfBase64: medicaoState.pdfBase64,
+        maqLista: cache.maquinas.length
+          ? cache.maquinas.map(m => `- ${m.marca} ${m.modelo} | placa: ${m.placa||'sem placa'} | id: ${m.id}`).join('\n')
+          : '(nenhuma máquina cadastrada ainda)'
       })
     });
 
     const data = await response.json();
-    if (data.error) throw new Error(data.error.message);
-
-    const text = data.content.map(i => i.text || '').join('');
-    const clean = text.replace(/```json|```/g, '').trim();
-    const resultado = JSON.parse(clean);
+    if (!data.ok) throw new Error(data.error || 'Erro na Edge Function');
+    const resultado = data.resultado;
 
     medicaoState.resultadoIA = resultado;
     medicaoState.editado = JSON.parse(JSON.stringify(resultado));
