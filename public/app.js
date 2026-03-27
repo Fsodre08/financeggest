@@ -674,17 +674,22 @@ async function criarUsuario(){
   if(!email||!senha){ alert('Preencha e-mail e senha.'); return; }
   if(senha.length<6){ alert('Senha mínima: 6 caracteres.'); return; }
   const btn=document.getElementById('btn-save-user'); btn.disabled=true; btn.innerHTML='<span class="spinner"></span>';
-  const {data,error}=await sb.auth.admin?.createUser({email,password:senha,email_confirm:true}) || {error:{message:'Use o painel do Supabase para criar usuários (Authentication → Add user)'}};
-  btn.disabled=false; btn.innerHTML='Criar usuário';
-  if(error){
-    showMsg('user-modal-msg','Para criar usuários, acesse Authentication → Users no Supabase e clique em "Add user". Depois volte aqui e adicione o role via SQL: insert into user_roles (user_id, role) values (\'UUID\', \''+role+'\');','info');
-    return;
-  }
-  if(data?.user){
-    await sb.from('user_roles').insert({user_id:data.user.id,role});
-    await sb.from('permissoes').insert({user_id:data.user.id});
-    cache.usuarios.push({user_id:data.user.id,role,email});
-    closeModal('user'); renderUsuarios();
+  try {
+    const {data:{session}}=await sb.auth.getSession();
+    const res=await fetch(SUPABASE_URL+'/functions/v1/criar-usuario',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':SUPABASE_ANON},
+      body:JSON.stringify({email,senha,role})
+    });
+    const result=await res.json();
+    btn.disabled=false; btn.innerHTML='Criar usuário';
+    if(!result.ok){ showMsg('user-modal-msg','Erro: '+result.error,'warn'); return; }
+    cache.usuarios.push({user_id:result.user_id,role,email});
+    closeModal('user'); renderUsuarios(); renderPermissoes();
+    alert('Usuário '+email+' criado com sucesso!');
+  } catch(err){
+    btn.disabled=false; btn.innerHTML='Criar usuário';
+    showMsg('user-modal-msg','Erro: '+err.message,'warn');
   }
 }
 
