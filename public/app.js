@@ -145,7 +145,7 @@ async function loadAll(){
 
   if(isAdmin()){
     const [uRes,pRes,eRes]=await Promise.all([
-      sb.from('user_roles').select('user_id, role'),
+      sb.from('usuarios_view').select('user_id, email, role'),
       sb.from('permissoes').select('*'),
       sb.from('envios_contador').select('*').order('created_at',{ascending:false}).limit(10)
     ]);
